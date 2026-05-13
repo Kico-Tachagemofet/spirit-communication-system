@@ -1,108 +1,102 @@
 # Spirit Communication System v5.0
 
-> 灵体沟通辅助系统 — Claude Code Agent / Hermes Skill
+灵体沟通辅助系统全流程版，设计给 Hermes、Claude Code、Codex、龙虾等 AI Agent 使用。它把符号抽取、AI 解读、Roleplay 段落、筊杯验证和自动海龟汤放进同一套流程。
 
-## 这是什么
+这一版的优势是包办感和体验感。Agent 会执行脚本、整理多套符号、生成解读方向、进入一段具有场景感的 Roleplay 输出，并在需要时通过 Yes / No 追问继续细化。
 
-这是给 **AI Agent 使用的系统配置**（skill / agent prompt），不是独立应用程序。
+## 适合谁
 
-可以直接作为：
-- **Claude Code** 的 agent 配置（放入 `.claude/agents/` 目录）
-- **Hermes** 的 skill（放入 `~/.hermes/skills/` 目录）
-- 其他兼容 OpenAI tool-calling 的 AI 工具的 system prompt
+- 想体验完整 AI Agent 沟通流程。
+- 想让 Agent 自动整合塔罗、字卡、占星骰子、易经、雷诺曼和筊杯。
+- 想测试 Roleplay 段落带来的沉浸式沟通体验。
+- 想使用自动海龟汤，让 Agent 通过 Yes / No 问题逐步缩小范围。
 
-加载后，AI 会按照文档定义的规则执行完整的符号抽取 → 解读 → 筊杯验证闭环。
+## 核心能力
 
-## 配套工具
+| 模块 | 内容 |
+|---|---|
+| 符号抽取 | 六位塔罗牌阵、字卡、占星骰子、易经、雷诺曼 |
+| 奇迹牌组 | 92 张塔罗卡池，含 78 标准牌 + 14 奇迹牌组 |
+| AI 解读 | Agent 整合多套符号，输出分析方向 |
+| Roleplay 段落 | 让沟通过程更有场景感和体验感 |
+| 筊杯验证 | 通过圣杯、笑杯、阴杯确认或修正解读 |
+| 自动海龟汤 | 对未收束的问题继续生成 Yes / No 追问 |
+| 数据校验 | 输出前核对脚本原始结果，禁止替换牌、卦、字卡、骰子 |
 
-本系统的脚本可以配合 [SpiritTool](https://github.com/Kico-Tachagemofet/Project-Hermes) 桌面应用使用，也可以直接命令行调用。
+## 与 v5.1 Lite 的关系
+
+v5.0 适合体验完整 Agent 流程。它会主动推进解读和追问，使用体验很顺滑。
+
+v5.1 Lite 来自一次边界修正。实际使用中，有些问题技术上可以继续问，关系上需要停。自动海龟汤可能把沟通推向过度细化，对方已经表达不满时，继续刨根问底会损害关系边界。
+
+所以 v5.1 Lite 保留符号抽取，移除 AI 解读、AI 筊杯验证和自动追问，把是否继续问留给使用者。
+
+| 场景 | 推荐版本 |
+|---|---|
+| 想体验沉浸式 Agent 全流程 | v5.0 |
+| 想保留主体判断，只要原始材料 | v5.1 Lite |
+| 想检查塔罗解读属性支撑 | v5.1 Lite + Symbol Anchor Check |
+| 想处理易经 / 梅花卦象 | v5.1 Lite + 梅花易数 Skill |
+
+## Agent 与 Prompt
+
+v5.0 可以压缩成超长 prompt，但完整体验更适合作为 Agent Skill：
+
+- 需要调用本地脚本生成随机结果。
+- 需要读取字卡、卦象和符号数据。
+- 需要按固定流程先抽取、再解读、再验证。
+- 需要在筊杯前预声明问题。
+- 需要处理笑杯后的自动细化。
+- 需要输出前核对原始数据，避免 LLM 逆向替换证据。
+
+普通 prompt 管表达方式；Agent Skill 管流程、数据、脚本和检查点。
+
+新时代了，AI Agent 可以入股。一个好的魔法师，也得是一个好的工程师。
 
 ## 使用方式
 
-### 作为 Claude Code Agent
+把 `spirit-communication-system.md` 放入 AI Agent 的 Skill / Agent 配置目录，然后在对话中提出灵体沟通或占卜请求。
 
-将 `spirit-communication-system.md` 放入项目的 `.claude/agents/` 目录：
+示例环境：
 
-```yaml
-# .claude/agents/spirit-communication-system.md
----
-name: spirit-communication-system
-description: "Spirit communication via tarot, I Ching, jiaobei verification"
-model: opus
----
-# ... 文档其余内容
-```
+- Hermes
+- Claude Code
+- Codex
+- 龙虾
+- 其他支持 Skill、tool-calling 或本地脚本调用的 AI Agent
 
-### 作为 Hermes Skill
-
-```bash
-# 放入 Hermes skills 目录
-cp spirit-communication-system.md ~/.hermes/skills/divination/
-```
-
-调用方式：在聊天中提及灵体沟通需求，Hermes 会自动加载此 skill。
-
-### 脚本使用
-
-文档中引用的脚本位于 `scripts/` 目录，所有脚本仅使用 Python 标准库。
-
-```bash
-# 塔罗 + 占星骰子
-python3 scripts/spirit_draw_v2.py
-
-# 易经起卦
-python3 scripts/yijing_draw.py
-
-# Hermes 字卡
-python3 scripts/wordcard_hermes.py
-
-# 筊杯验证
-python3 scripts/jiaobei.py
-```
+脚本使用 Python 3.10+，核心脚本仅依赖标准库。
 
 ## 项目结构
 
-```
+```text
 spirit-communication-system/
-├── spirit-communication-system.md   # Agent / Skill 系统规则文档
+├── README.md
+├── spirit-communication-system.md   # Agent / Skill 主规则
 ├── scripts/
-│   ├── spirit_draw_v2.py            # 92张塔罗牌阵 + 占星骰子
-│   ├── yijing_draw.py               # 易经起卦（本卦/变爻/之卦）
+│   ├── spirit_draw_v2.py            # 六位塔罗牌阵 + 占星骰子
+│   ├── yijing_draw.py               # 易经起卦
 │   ├── jiaobei.py                   # 筊杯验证
-│   ├── lenormand.py                 # 雷诺曼牌
-│   ├── tarot_astro_draw.py          # 简化3牌 + 占星骰子
-│   ├── wordcard_hermes.py           # Hermes 字卡抽取
-│   └── jiaobei_gua.py              # 茭杯起卦
+│   ├── jiaobei_gua.py               # 筊杯起卦
+│   ├── lenormand.py                 # 雷诺曼
+│   ├── tarot_astro_draw.py          # 简化三牌 + 占星骰子
+│   └── wordcard_*.py                # 字卡脚本
 └── data/
-    └── 字卡-Hermes.md               # Hermes 字卡词库
+    └── ...                          # 字卡与符号数据
 ```
 
-## 依赖
+## 来源与边界
 
-Python 3.10+，**仅使用标准库**，无需 pip install。
+本项目包含四类内容：
 
-## 符号系统
+1. 传统与公开来源：塔罗、易经、占星骰子、筊杯、雷诺曼等符号系统。
+2. 作者整理：六位牌阵、奇迹牌组处理、筊杯验证流程、自动海龟汤、Roleplay 输出结构。
+3. 程序生成：脚本随机抽取结果、字卡结果、卦象结果、筊杯结果。
+4. AI 参与：整合解读、场景化表达、验证问题设计和偏差定位。
 
-| 符号系统 | 脚本 | 说明 |
-|---------|------|------|
-| 塔罗牌阵 | `spirit_draw_v2.py` | 92张卡池（78标准 + 14奇迹），6位牌阵 |
-| 占星骰子 | 含于 `spirit_draw_v2.py` | 行星 × 星座 × 宫位 + 尊贵状态 + 飞星 |
-| 易经 | `yijing_draw.py` | 64卦，含本卦、变爻、之卦 |
-| 字卡 | `wordcard_hermes.py` | Hermes 字卡词库，随机抽3张 |
-| 筊杯 | `jiaobei.py` | 圣杯/笑杯/阴杯 |
-| 雷诺曼 | `lenormand.py` | 36张牌 |
+v5.0 的 AI 介入程度较高。使用时建议保留人工停止权：当问题已经触及关系边界、隐私边界或对方明确表达抗拒时，应停止自动追问。
 
-## 关于奇迹牌组
-
-本系统中的 **14张奇迹牌组**（以太/Quintessence）来自 **《世界名画塔罗牌》**。
-
-这是一套以世界名画为牌面的塔罗牌，每张牌对应一幅经典绘画作品，通过画面叙事传达牌意。奇迹牌组是该牌组独创的第五花色，专注于描述人格结构本身的转化机制——不是「发生了什么事」，而是「这个人正在经历什么层次的内在转变」。
-
-**好用，爱用，强烈推荐。** 尤其适合：
-- 灵体沟通——奇迹牌捕捉的不是事件层面的信息，而是沟通双方的内在转化状态，比传统四元素牌组更贴近灵体沟通的本质
-- 仪式相关问题——正视阴影、人格重组、神圣遭遇等转化机制直接对应仪式工作的核心经验
-
-主创小红书：[@世界名画塔罗牌](https://www.xiaohongshu.com/user/profile/5e5f8eaa00000000010017af)
+本项目用于个人占卜、符号分析、创作、记录和实验性 Agent 工作流。它不提供现实决策担保，不替代医疗、法律、财务或心理咨询建议。
 
 ## License
 
